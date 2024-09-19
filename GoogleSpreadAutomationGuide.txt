@@ -1,0 +1,37 @@
+# 로그 파일 작명법
+# 24_01_1 -> 24년도 1월 1일부터 10일 집계
+# 24_11_2 -> 24년도 11월 11일부터 20일 집계
+# 24_12_3 -> 24년도 12월 21일부터 말일까지의 집계
+
+# 로그 파일 나누는 기준
+# 1일부터 10일까지는  _1
+# 11일부터 20일까지는 _2
+# 21일부터 그 이후는  _3
+
+
+키포인트는 구글 스프레드 시트와의 통신 횟수 최소화! 안그러면 속도 느려짐...
+절대로 api 자꾸 호출하면 안댐! 한번 api 호출할 때 마다 최소 1초이상은 걸림.. 핵느려ㅠㅠ
+
+이 프로그램의 전제는, 
+'구글 스프레드시트가 항상 로그파일보다 업데이트가 늦다'는 점을 고려하고 만들어짐
+
+구글 스프레드 시트의 직접적인 수정 및 새 시트추가 절대 하면 안댐! 그럼 프로그램 틀어짐..
+개인적인 수정은 복사해다가 다른 시트 파서 수정하세요,,
+
+
+최초에 해야하는것 -> # initialize 작업
+1. 구글 스프레드 시트의 리스트를 파이썬에 저장
+2. 시트 리스트는 2개이다. 페이지, 이벤트
+3. 여기서 가장 마지막꺼 추출해서 p_lastSheet, e_lastSheet 변수명으로 저장하기
+4. p_lastSheet, e_lastSheet의 전체 컬럼 불러와서 마지막으로 기록된 p_sheetLastRow, e_sheetLastRow 기록하기 페이지, 이벤트 둘다
+
+while True 돌면서 지속적으로 수행할 것
+1. 기존의 파일 시스템의 로그 파일중에서 최근에 수정된애꺼의 이름 불러오기 페이지, 이벤트 둘다. 변수명은 p_lastLogFileName, e_lastLogFileName
+2. p_lastLogFileName, e_lastLogFileName과 p_lastSheet, e_lastSheet와 비교
+3. 일치하면 그 이름 가지고 문서 수정작업 들어갈거임
+4. 없으면 새로 생성함. 내 파일시스템에서 불러와진애의 이름을 가지고. 그리고 p_sheetLastRow, e_sheetLastRow 는 둘다 2이된다. 그리고 헤더 셋업해주는애 호출
+5. p_lastLogFileName, e_lastLogFileName 로그파일 읽어들여서 (p_sheetLastRow - 2), (e_sheetLastRow의 - 2) 부터 시작되는 dataSet준비
+   변수 이름은 p_addDataList ,e_addDataList
+6. p_lastSheet, e_lastSheet에다가 p_addDataList ,e_addDataList 기록해주기
+7. 기록 성공적으로 했으면은 sheetLastRow늘려줘야함. sheetLastRow + len(dataSet)
+8. 1분동안 sleep
